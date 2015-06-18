@@ -1,0 +1,29 @@
+html, body{
+    height: 100%;
+}
+
+* {
+    padding: 5px;
+}
+
+div {
+    border: 1px solid black;
+}
+
+#passage-text{
+    max-height: 800px;
+    overflow-y: scroll;
+    white-space: pre-wrap;
+}
+
+#timer-div{
+    height: 400px;
+}
+
+#chart-div{
+    height: 400px;
+}
+
+#passage-wrapper {
+    position: relative;
+}

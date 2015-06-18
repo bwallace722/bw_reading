@@ -1,0 +1,9 @@
+{% if passage_list %}
+    <ul>
+    {% for passage in passage_list %}
+        <li><a href="/speed_reading/{{ passage.id }}/practice/">{{ passage.passage_title }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No passages are available.</p>
+{% endif %}
