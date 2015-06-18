@@ -16,14 +16,11 @@ div {
     white-space: pre-wrap;
 }
 
-#timer-div{
-    height: 400px;
-}
-
-#chart-div{
-    height: 400px;
+.left-side{
+    height: 50%;
 }
 
 #passage-wrapper {
     position: relative;
+    height: 100%;
 }
