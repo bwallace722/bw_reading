@@ -1,10 +1,9 @@
-
-
+(function() {
 // Submit post on submit
 $('#post-form').on('submit', function(event){
     event.preventDefault();
     console.log("form submitted!")  // sanity check
-    post_passage_attempt();
+    postPassageAttempt();
 });
 
 /* 
@@ -13,7 +12,7 @@ just attempted the passage (i.e. read the passage) and posts the time
 the student spent reading and the id. of the passage.
 If it's successful, it then adds the latest attempt to the wpm chart.
 */
-function post_passage_attempt() {
+function postPassageAttempt() {
     console.log("create post is working!") // sanity check
     var duration = $('#duration').val();
     var passage_id = $('#passage_id').val();
@@ -31,7 +30,7 @@ function post_passage_attempt() {
 
             //here we add the value to the graph directly to avoid 
             //a whole other ajax call to get the new values:
-            log_time(duration, passage_id);
+            logTime(duration, passage_id);
 
         },
 
@@ -70,20 +69,23 @@ var chart = new Chart(ctx).Line(data, {
     bezierCurve: false,});
 var tries = 4;
 
+document.getElementById("dummy-times").onclick = getTimes;
 
-function get_times() {
+function getTimes() {
     console.log("saving time");
     var score = Math.floor(Math.random() * 10) + 10 + (tries * 3);
     console.log("scored: ", score)
     label = tries;
-    log_time(score, label);
+    logTime(score, label);
     tries++;
 }
 
-function log_time(score, label) {
+function logTime(score, label) {
 
     chart.addData([score], label);
 }
+
+document.getElementById("draw-canvas-lines").onclick = draw_canvas_lines();
 
 function draw_canvas_lines() {
 
@@ -99,3 +101,4 @@ function draw_canvas_lines() {
     ctx.stroke();
 
 };
+})();
