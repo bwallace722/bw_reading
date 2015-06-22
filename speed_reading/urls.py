@@ -14,4 +14,5 @@ urlpatterns = [
     url(r'^(?P<passage_id>[0-9]+)/practice/$', views.practice, name="practice"),
     url(r'^save_attempt/$',
         views.save_attempt, name="save_attempt"),
+    url(r'^attempt_history/$', views.attempt_history, name="attempt_history"),
 ]

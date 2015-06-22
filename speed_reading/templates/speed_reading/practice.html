@@ -3,8 +3,8 @@
 
 {% load staticfiles %}
 
-<link rel="stylesheet" type="text/css" href="{% static 'speed_reading/style.css' %}" />
 <link rel="stylesheet" type="text/css" href="{% static 'bootstrap.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'speed_reading/style.css' %}" />
 
 
 <body>
@@ -15,10 +15,18 @@
         <div class="row-fluid">
 
         <div id="lines-div" class="col-md-6">
-            <button id="draw-canvas-lines">draw canvas lines</button>
+            <p>
+            Distance of lines from margin:
+            </p>
+            <input type="text" value="0" class="dial">
         </div>
 
         <div id="timer-div" class="col-md-6">
+
+            <div class="well well-lg">
+            <div class="well well-lg">Check out this well</div>
+        </div>
+
             Enter a time:
             <form action="/create_post/" id="post-form" method="POST">
             {% csrf_token %}
@@ -31,7 +39,7 @@
         <div class="row-fluid">
         <div id="chart-div" class="col-md-12">
 
-            <button id="dummy-times">add dummy time to chart</button>
+            <button hidden id="attempt-history">request attempt history</button>
             <br>
             <canvas id="chart" width="600" height="350"></canvas>
         </div>
@@ -39,18 +47,20 @@
     </div>
 
     <div id="passage-text" class="col-md-5">
+
+
+
         <h1>{{ passage.passage_title }}</h1>
-        <h2>Some Explanation of the Rules</h2>
+        <h3>Some Explanation of the Rules</h3>
             <div class="row">
-                <div class="col-md-1">
-                    <br><br><br><br><br> 5  <br><br><br><br><br> 10  <br><br><br><br><br> 15  
-                </div>
                 <div class="col-md-9">
-                       <!-- <canvas id="lines-canvas">
-                        </canvas> -->
-                        {{ passage.passage_text }}
+                    <div id="wrapper">
+                       <canvas id="lines-canvas"> </canvas>
+                       <div id="text"> {{ passage.passage_text }} </div>
                     </div>
-                <div class="col-md-2"></div>
+                </div>
+
+                <div class="col-md-3"></div>
         </div>
 </div>
 </div>
@@ -60,6 +70,7 @@
 </body>
 
 <script src="{% static 'jquery-2.1.4.min.js' %}"></script>
+<script src="{% static 'jquery.knob.js' %}"></script>
 <script src="{% static 'Chart.js' %}"></script>
 <script src="{% static 'bootstrap.js' %}"></script>
 <script src="{% static 'speed_reading/main.js' %}"></script>

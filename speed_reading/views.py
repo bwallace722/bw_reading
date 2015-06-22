@@ -1,12 +1,16 @@
+import json
+
 from django.contrib.auth import (
     authenticate, login as auth_login, logout as auth_logout)
 from django.contrib.auth.decorators import login_required
+from django.core import serializers
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import Passage, Student, Attempt
+
+from .models import Passage, Attempt
 
 
 @login_required
@@ -65,7 +69,24 @@ def save_attempt(request):
     duration = int(request.POST.get("duration"))
 
     new_attempt = Attempt(passage=passage,
-                          student=user.student,
+                          user=user,
                           duration_in_microseconds=duration)
     new_attempt.save()
     return HttpResponse("thanks")
+
+@login_required
+@csrf_exempt
+def attempt_history(request):
+    user = request.user
+    passage_id = request.POST.get("passage_id")
+    attempts = Attempt.objects.filter(user=user);
+    print(attempts)
+    data = [[a.words_per_minute() for a in attempts], 
+            [a.passage.id for a in attempts]];
+    print(data)
+    return HttpResponse(json.dumps(data));
+
+def lost(request, err):
+    return login(
+        request, context={
+        "error_message" : "That url doesn't exist.  Try logging in?"})

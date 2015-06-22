@@ -7,20 +7,26 @@ html, body{
 }
 
 div {
-    border: 1px solid black;
+    /*
+    border: 1px solid black; 
+    /**/
 }
 
-#passage-text{
-    max-height: 800px;
+
+#wrapper{
+    position: relative;
+    width: 100%;
+    height: 600px;
+}
+
+#lines-canvas, #text {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+#text {
     overflow-y: scroll;
     white-space: pre-wrap;
-}
-
-.left-side{
-    height: 50%;
-}
-
-#passage-wrapper {
-    position: relative;
-    height: 100%;
+    z-index: 10;
 }

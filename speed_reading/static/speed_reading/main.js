@@ -1,4 +1,59 @@
 (function() {
+
+var chart;
+
+$(function() {
+        $(".dial").knob({
+            'min': 0,
+            'max': 100,
+            'angleOffset': -120,
+            'angleArc': 240,
+            'startAngle': 0,
+            'inputColor': 'white',
+            'change' : function (v) {
+                draw_lines(v);
+            }
+        });
+    });
+
+
+
+var SCROLL_BAR = 17;
+var DISTANCE_FROM_TOP = 0;
+var LINE_WIDTH = 1;
+var MAX_SIDE_DISTANCE = 100;
+
+function draw_lines(v) {
+
+    var sideDistance = MAX_SIDE_DISTANCE * (v / 100);
+    var canvas = document.getElementById("lines-canvas");
+    var ctx = canvas.getContext("2d");
+    var x = canvas.width;
+    var y = canvas.height;
+
+    ctx.clearRect(0, 0, x, y);
+
+    ctx.beginPath();
+    ctx.moveTo(sideDistance,DISTANCE_FROM_TOP);
+    ctx.lineTo(sideDistance, y - DISTANCE_FROM_TOP);
+    ctx.moveTo(x - sideDistance - SCROLL_BAR, DISTANCE_FROM_TOP);
+    ctx.lineTo(x - sideDistance - SCROLL_BAR, y - DISTANCE_FROM_TOP);
+    ctx.lineWidth = LINE_WIDTH;
+    ctx.stroke();
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
 // Submit post on submit
 $('#post-form').on('submit', function(event){
     event.preventDefault();
@@ -13,7 +68,7 @@ the student spent reading and the id. of the passage.
 If it's successful, it then adds the latest attempt to the wpm chart.
 */
 function postPassageAttempt() {
-    console.log("create post is working!") // sanity check
+    console.log("create post is working!"); // sanity check
     var duration = $('#duration').val();
     var passage_id = $('#passage_id').val();
     $.ajax({
@@ -43,10 +98,38 @@ function postPassageAttempt() {
     });
 };
 
+$("#attempt-history").click(requestAttemptHistory);
 
+function requestAttemptHistory() {
+    console.log("requesting attempt history");
+    var passage_id = $('#passage_id').val();
+    $.ajax({
+        url : "/speed_reading/attempt_history/",
+        type : "POST",
+        data : {passage_id : passage_id},
+        dataType: 'json',
+        success : function(json) {
+            console.log("received the following attempt history:")
+            console.log(json);
+            setupChart(json);
+            //do something with it
+        },
+        error : function(xhr, errmsg, err) {
+            console.log(xhr.status + ": " + xhr.responseText);
+            console.log(errmsg);
+            setupChart([[], []]);
+        }
+    })
+}
+
+function setupChart(history) {
+
+var previousAttempts = history;
+var times = previousAttempts[0];
+var labels = previousAttempts[1];
 // This is for the chart displaying progress:
 var data = {
-    labels: [1, 2, 3],
+    labels: labels,
     datasets: [
         {
             label: "My Attempts",
@@ -56,49 +139,29 @@ var data = {
             pointStrokeColor: "#fff",
             pointHighlightFill: "#fff",
             pointHighlightStroke: "rgba(151,187,205,1)",
-            data: [25, 24, 30]
+            data: times
         }
     ]
 };
 
 var ctx = document.getElementById("chart").getContext("2d");
-var chart = new Chart(ctx).Line(data, {
+chart = new Chart(ctx).Line(data, {
 
     scaleLabel: "<%=value%> wpm",
     scaleBeginAtZero: true,
     bezierCurve: false,});
-var tries = 4;
-
-document.getElementById("dummy-times").onclick = getTimes;
-
-function getTimes() {
-    console.log("saving time");
-    var score = Math.floor(Math.random() * 10) + 10 + (tries * 3);
-    console.log("scored: ", score)
-    label = tries;
-    logTime(score, label);
-    tries++;
 }
 
-function logTime(score, label) {
 
+function logTime(score, label) {
     chart.addData([score], label);
 }
 
-document.getElementById("draw-canvas-lines").onclick = draw_canvas_lines();
 
-function draw_canvas_lines() {
 
-    var canvas = document.getElementById("lines-canvas");
-    var ctx = canvas.getContext("2d");
-    var x = canvas.width;
-    var y = canvas.height;
-    console.log("x: ", x, " y: ", y);
 
-    ctx.beginPath();
-    ctx.moveTo(20,0);
-    ctx.lineTo(20, y);
-    ctx.stroke();
 
-};
+$(document).ready(function(){requestAttemptHistory()}) 
+
+
 })();
