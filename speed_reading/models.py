@@ -18,9 +18,8 @@ class Attempt(models.Model):
     """
     passage = models.ForeignKey(Passage)
     user = models.ForeignKey(User)
-    # Django 1.7 doesn't support 1.8's DurationField, but DurationField
-    # is implemented in number of microseconds.
-    duration_in_microseconds = models.BigIntegerField()
+    # Django 1.7 doesn't support 1.8's DurationField:
+    duration_in_milliseconds = models.BigIntegerField()
     time_of_occurrence = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -31,4 +30,4 @@ class Attempt(models.Model):
         Calculates reading speed of the attempt in words per minute.
         """
         # not yet implemented
-        return self.duration_in_microseconds
+        return self.duration_in_milliseconds

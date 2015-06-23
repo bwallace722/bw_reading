@@ -1,5 +1,87 @@
 (function() {
 
+
+/*
+
+This directive provides a timer element that counts up in
+milliseconds.  When the timer stops, the provided function is called
+with the number of elapsed milliseconds, and the timer is reset to
+zero.
+If the element is placed inside an environment with bootstrap.css,
+then the timer is rendered using wells.
+
+TODO:
+-[ ] This polutes the scope -- it would be better to isolate the scope and
+somehow have just the element be able to see the milliseconds variable
+-[ ] It would be cool if this directive were more stand-alone, and you
+could pass in a function to it.
+
+*/
+var app = angular.module('time', []);
+app.directive('timer', ['$interval', '$filter', function($interval, $filter){
+    return {
+        restrict: 'E',
+        //this template should be in the same directory
+        template:
+        '<div id="outer" class="well well-sm" style="width: 200">'
+            +'<div id="inner" class="well well-sm">'
+                +'{{ milliseconds | date : "mm:ss"}}'
+            +'</div>'
+            +'<div class="well well-sm">'
+                +'<div class="btn-group-justified">'
+                    +'<button class="btn-primary" ng-click="start()"> start </button>'
+                    +'<button class="btn-primary" ng-click="stop()"> stop </button>'
+                +'</div>'
+            +'</div>'
+        +'</div>',
+
+        link: function(scope, element, attrs){
+
+            //7 is chosen so that the last millisecond's place 
+            //cycles through all the possible values
+            UPDATE_INTERVAL = 7;
+
+            scope.milliseconds = 0;
+            scope.counting = false;
+
+            scope.start = function() {
+                scope.milliseconds = 0;
+                scope.counting = true;
+            }
+
+            scope.stop = function() {
+                scope.counting = false;
+                prettyTime = $filter('date')(scope.milliseconds , 'mm:ss:sss')
+
+                if (attrs.onStop) {
+                    console.log(attrs.onStop);
+                }
+
+                console.log("time: " + prettyTime);
+                postPassageAttempt(scope.milliseconds);
+            }
+
+            function updateTime() {
+                if (scope.counting) {
+                    scope.milliseconds += UPDATE_INTERVAL;
+                }
+            }
+            //Updating every 7 milliseconds may be problematic
+            //on a slow computer with a heavy processer load. This
+            //could introduce a bug in some circumstances.
+            timeMillis = $interval(updateTime, UPDATE_INTERVAL);
+
+            element.on('$destroy', function() {
+                $interval.cancel(timeMillis);
+            });
+
+        }
+    };
+}]);
+
+
+
+
 var chart;
 
 $(function() {
@@ -67,9 +149,8 @@ just attempted the passage (i.e. read the passage) and posts the time
 the student spent reading and the id. of the passage.
 If it's successful, it then adds the latest attempt to the wpm chart.
 */
-function postPassageAttempt() {
+function postPassageAttempt(duration) {
     console.log("create post is working!"); // sanity check
-    var duration = $('#duration').val();
     var passage_id = $('#passage_id').val();
     $.ajax({
         url : "/speed_reading/save_attempt/", // the endpoint
