@@ -164,9 +164,8 @@ function postPassageAttempt(duration) {
             console.log(json); // log the returned json to the console
             console.log("success"); // another sanity check
 
-            //here we add the value to the graph directly to avoid 
-            //a whole other ajax call to get the new values:
-            logTime(duration, passage_id);
+            //logTime(duration, passage_id);
+            requestAttemptHistory();
 
         },
 

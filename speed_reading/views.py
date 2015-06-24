@@ -70,7 +70,7 @@ def save_attempt(request):
 
     new_attempt = Attempt(passage=passage,
                           user=user,
-                          duration_in_microseconds=duration)
+                          duration_in_milliseconds=duration)
     new_attempt.save()
     return HttpResponse("thanks")
 
@@ -81,7 +81,7 @@ def attempt_history(request):
     passage_id = request.POST.get("passage_id")
     attempts = Attempt.objects.filter(user=user);
     print(attempts)
-    data = [[a.words_per_minute() for a in attempts], 
+    data = [[a.words_per_minute for a in attempts], 
             [a.passage.id for a in attempts]];
     print(data)
     return HttpResponse(json.dumps(data));
